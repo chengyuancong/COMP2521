@@ -1,22 +1,64 @@
-Input	Has	Initial	Number	AvgTime	AvgTime
-Size	Dups	Order	of runs	forusel	forsort
-10000	no	random	N	T1sec	T2sec
-10000	no	sorted	N	T1sec	T2sec
-10000	no	reverse	N	T1sec	T2sec
-10000	yes	random	N	T1sec	T2sec
-10000	yes	sorted	N	T1sec	T2sec
-10000	yes	reverse	N	T1sec	T2sec
-20000	no	random	N	T1sec	T2sec
-20000	no	sorted	N	T1sec	T2sec
-20000	no	reverse	N	T1sec	T2sec
-20000	yes	random	N	T1sec	T2sec
-20000	yes	sorted	N	T1sec	T2sec
-20000	yes	reverse	N	T1sec	T2sec
-40000	no	random	N	T1sec	T2sec
-40000	no	sorted	N	T1sec	T2sec
-40000	no	reverse	N	T1sec	T2sec
-40000	yes	random	N	T1sec	T2sec
-40000	yes	sorted	N	T1sec	T2sec
-40000	yes	reverse	N	T1sec	T2sec
+Input	    Has	    Initial	        Number	    AvgTime	    AvgTime
+Size	    Dups	Order	        of runs	    forusel	    forsort
+10000	    no	    random	        3	        0m0.112s	0m0.010s
+10000	    no	    sorted	        3	        0m0.159s	0m0.008s
+10000	    no	    reverse	        3	        0m0.005s	0m0.006s
+
+10000	    yes	    random	        3	        0m0.114s	0m0.010s
+10000	    yes	    sorted	        3	        0m0.165s	0m0.008s
+10000	    yes	    reverse	        3	        0m0.005s	0m0.007s
+
+20000	    no	    random	        3	        0m0.589s	0m0.020s
+20000	    no	    sorted	        3	        0m0.673s    0m0.011s
+20000	    no	    reverse	        3	        0m0.010s    0m0.012s
+
+20000	    yes	    random	        3	        0m0.586s    0m0.019s
+20000	    yes	    sorted	        3	        0m0.656s    0m0.013s
+20000	    yes	    reverse	        3	        0m0.010s    0m0.014s
+
+40000	    no	    random	        3	        0m3.263s	0m0.044s
+40000	    no	    sorted	        3	        0m2.481s    0m0.024s
+40000	    no	    reverse	        3	        0m0.020s	0m0.024s
+
+40000	    yes	    random	        3	        0m3.248s    0m0.052s
+40000	    yes	    sorted	        3	        0m2.562s	0m0.026s
+40000	    yes	    reverse	        3	        0m0.019s    0m0.027s
+
+80000	    no	    random	        3	        0m18.239s   0m0.086s
+80000	    no	    sorted	        3	        0m10.148s	0m0.043s
+80000	    no	    reverse	        3	        0m0.037s    0m0.044s
+
+80000	    yes	    random	        3	        0m17.591s   0m0.093s
+80000	    yes	    sorted	        3	        0m10.438s   0m0.047s
+80000	    yes	    reverse	        3	        0m0.037s	0m0.053s
+
+160000	    no	    random	        3	        1m25.416s   0m0.228s
+160000	    no	    sorted	        3	        0m42.814s   0m0.095s
+160000	    no	    reverse	        3	        0m0.073s	0m0.093s
+
+160000	    yes	    random	        3	        1m27.267s   0m0.218s
+160000	    yes	    sorted	        3	        0m41.645s   0m0.097s
+160000	    yes	    reverse	        3	        0m0.075s	0m0.105s
+
+320000	    no	    random	        3	        6m55.164s   0m0.430s
+320000	    no	    sorted	        3	        2m46.637s	0m0.176s
+320000	    no	    reverse	        3	        0m0.144s    0m0.176s
+
+320000	    yes	    random	        3	        6m46.611s	0m0.467s
+320000	    yes	    sorted	        3	        2m56.110s   0m0.197s
+320000	    yes	    reverse	        3	        0m0.148s	0m0.213s
 ...
 
+Conclusion:
+1. UseIntList always have a better performance than sort in reverse order, no matter it has duplicates or not.
+
+2. UseIntList costs far more time than sort when it is random or sorted set.
+
+3. Duplicate set often costs a little more time than the set that other conditions are same but do not have duplicate.
+   Sometimes they cost almost same time.
+
+4. For UseIntList, when input size is small, time cost sorted > random >> reverse, 
+   but as the size increases, randow > sorted >> reverse.
+
+5. For sort, random > sorted ≈ reverse at the beginning,
+   but random > reverse > sorted when input size is large and there are duplicate numbers.

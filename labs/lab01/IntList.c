@@ -111,30 +111,23 @@ void IntListInsertInOrder(IntList L, int v)
 {	
 	if (L->size == 0) {				             		// if empty
 		IntListInsert(L, v);
-	} else {											// not empty
+	} else {											// if not empty
 		struct IntListNode *curr = L->first;
 		if (curr->data > v) {							// insert to head
 			struct IntListNode *newHead = newIntListNode(v);
 			newHead->next = L->first;
 			L->first = newHead;
 			L->size++;
-		} else {
-			struct IntListNode *insertNode = NULL;
-			while (curr != NULL) {						// search the position to insert
-				if (curr->next != NULL && curr->next->data > v) {
-					insertNode = curr;
-					break;
-				}
+		} else if (v > L->last->data) {					// insert to end
+			IntListInsert(L, v);
+		} else {										// insert to middle
+			while (v > curr->next->data) {				// search the position to insert
 				curr = curr->next;
 			}
-			if (insertNode == NULL) {					// insert to end
-				IntListInsert(L, v);
-			} else {									// insert to the middle
-				struct IntListNode *newNode = newIntListNode(v);
-				newNode->next = curr->next;
-				curr->next = newNode;
-				L->size++;
-			}
+			struct IntListNode *newNode = newIntListNode(v);
+			newNode->next = curr->next;
+			curr->next = newNode;
+			L->size++;
 		}
 	}
 }

@@ -7,11 +7,16 @@
 int main(void) {
 	Queue q = QueueNew();
 	
-	// TODO
-	// Write a benchmark test to demonstrate the difference between
-	// ArrayQueue and CircularArrayQueue
+	// enqueue 160000
+	for (int i = 1; i <= 160000; i++) {
+		QueueEnqueue(q, i);
+	}
 	
-	
+	// dequeue 1 to 80000, enqueue 160001 to 240000
+	for (int i = 160001, j = 1; i <= 240000; i++, j++) {
+		QueueEnqueue(q, i);
+		QueueDequeue(q);
+	}
 	
 	QueueFree(q);
 }

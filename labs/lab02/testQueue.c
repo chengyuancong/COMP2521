@@ -8,11 +8,13 @@
 static void testQueue1(void);
 static void testQueue2(void);
 static void testQueue3(void);
+static void testQueue4(void);
 
 int main(void) {
 	testQueue1();
 	testQueue2();
 	testQueue3();
+	testQueue4();
 	
 	printf("All tests passed!\n");
 }
@@ -79,7 +81,66 @@ static void testQueue2(void) {
 }
 
 static void testQueue3(void) {
-	// TODO: For you to test your CircularArrayQueue
-	printf("Remove this when you have added tests to this function\n");
+	Queue q = QueueNew();
+	
+	// enqueue 1 to 100
+	for (int i = 1; i <= 100; i++) {
+		QueueEnqueue(q, i);
+		assert(QueueSize(q) == i);
+	}
+	
+	// dequeue 1 to 50
+	for (int j = 1; j <= 50; j++) {
+		assert(QueueFront(q) == j);
+		assert(QueueDequeue(q) == j);
+	}
+	assert(QueueSize(q) == 50);
+	
+	// enqueue 101 to 150, dequeue 51 to 100
+	for (int i = 101, j = 51; i <= 150; i++, j++) {
+		QueueEnqueue(q, i);
+		assert(QueueFront(q) == j);
+		assert(QueueDequeue(q) == j);
+	}
+	assert(QueueSize(q) == 50);
+	
+	// dequeue 101 to 120
+	for (int j = 101; j <= 120; j++) {
+		assert(QueueFront(q) == j);
+		assert(QueueDequeue(q) == j);
+	}
+	assert(QueueSize(q) == 30);
+	
+	// dequeue 121 to 150
+	for (int j = 121; j <= 150; j++) {
+		assert(QueueFront(q) == j);
+		assert(QueueDequeue(q) == j);
+	}
+	assert(QueueIsEmpty(q));
+	
+	// enqueue a number
+	QueueEnqueue(q, 151);
+	assert(QueueFront(q) == 151);
+	
+	QueueFree(q);
 }
 
+static void testQueue4(void) {
+	Queue q = QueueNew();
+	
+	// enqueue 1600
+	for (int i = 1; i <= 1600; i++) {
+		QueueEnqueue(q, i);
+		assert(QueueSize(q) == i);
+	}
+	
+	// dequeue 1 to 800, enqueue 1601 to 2400
+	for (int i = 1601, j = 1; i <= 2400; i++, j++) {
+		QueueEnqueue(q, i);
+		assert(QueueFront(q) == j);
+		assert(QueueDequeue(q) == j);
+	}
+	
+	assert(QueueSize(q) == 1600);
+	QueueFree(q);
+}

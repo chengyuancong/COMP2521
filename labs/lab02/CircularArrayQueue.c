@@ -50,7 +50,22 @@ void QueueFree(Queue q) {
  * Adds an item to the end of the queue
  */
 void QueueEnqueue(Queue q, Item it) {
-	// TODO
+	if ((q->frontIndex + q->size) % q->capacity == q->frontIndex) {
+		q->items = realloc(q->items, 2 * q->capacity * sizeof(int));
+		if (q == NULL) {
+			fprintf(stderr, "couldn't reallocate Queue");
+			exit(EXIT_FAILURE);
+		}
+		for (int i = q->capacity, j = 0; i < (q->frontIndex + q->capacity); i++, j++) {
+			q->items[i] = q->items[j];
+		}
+		q->items[q->frontIndex + q->size] = it;
+		q->size++;
+		q->capacity = 2 * q->capacity;
+	} else {
+		q->items[(q->frontIndex + q->size) % q->capacity] = it;
+		q->size++;
+	}
 }
 
 /**
@@ -58,8 +73,10 @@ void QueueEnqueue(Queue q, Item it) {
  * Assumes that the queue is not empty
  */
 Item QueueDequeue(Queue q) {
-	// TODO
-	return 0;
+	Item head = q->items[q->frontIndex];
+	q->frontIndex = (q->frontIndex + 1) % q->capacity;
+	q->size--;
+	return head;
 }
 
 /**

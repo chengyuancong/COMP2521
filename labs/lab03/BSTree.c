@@ -136,7 +136,20 @@ void BSTreePostfix(BSTree t)
 // Time complexity(...)
 void BSTreeLevelOrder(BSTree t)
 {
-	return; // TODO
+	Queue q = QueueNew();
+	if (t != NULL) {
+		QueueEnqueue(q, t);
+	}
+	while (!QueueIsEmpty(q)) {
+		BSTree node = QueueDequeue(q);
+		printf("%d ", node->value);
+		if (node->left != NULL) {
+			QueueEnqueue(q, node->left);
+		}
+		if (node->right != NULL) {
+			QueueEnqueue(q, node->right);
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -152,10 +165,16 @@ int BSTreeNumNodes(BSTree t)
 }
 
 // Counts the number of leaves in the given BSTree
-// Time complexity: O(...)
+// Time complexity: O()
 int BSTreeNumLeaves(BSTree t)
 {
-	return 0; // TODO
+	if (t == NULL) {
+		return 0;
+	} else if (t->left == NULL && t->right == NULL) {
+		return 1;
+	} else {
+		return BSTreeNumLeaves(t->left) + BSTreeNumLeaves(t->right);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////

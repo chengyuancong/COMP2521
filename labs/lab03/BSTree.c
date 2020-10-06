@@ -133,7 +133,7 @@ void BSTreePostfix(BSTree t)
 }
 
 // Prints the values in the given BSTree in level-order
-// Time complexity(...)
+// Time complexity: O(n)
 void BSTreeLevelOrder(BSTree t)
 {
 	Queue q = QueueNew();
@@ -165,7 +165,7 @@ int BSTreeNumNodes(BSTree t)
 }
 
 // Counts the number of leaves in the given BSTree
-// Time complexity: O()
+// Time complexity: O(n)
 int BSTreeNumLeaves(BSTree t)
 {
 	if (t == NULL) {

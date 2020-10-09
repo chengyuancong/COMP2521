@@ -28,12 +28,13 @@ static void doSetPrint(Node n);
  * Creates a new empty set
  */
 Set  SetNew(void) {
-	Set s = malloc(sizeof(Set));
+	Set s = malloc(sizeof(struct set));
 	if (s == NULL) {
 		fprintf(stderr, "couldn't allocate set\n");
 		exit(EXIT_FAILURE);
 	}
-	
+	s->root = NULL;
+	s->size = 0;
 	return s;
 }
 
@@ -42,12 +43,15 @@ Set  SetNew(void) {
  */
 void SetFree(Set s) {
 	doSetFree(s->root);
+	free(s);
 }
 
 static void doSetFree(Node n) {
-	free(n);
-	free(n->left);
-	free(n->right);
+	if (n != NULL) {
+		doSetFree(n->left);
+		doSetFree(n->right);
+		free(n);
+	}
 }
 
 /**
@@ -55,8 +59,10 @@ static void doSetFree(Node n) {
  * Does not insert duplicates
  */
 void SetAdd(Set s, int elem) {
-	s->root = doSetAdd(s->root, elem);
-	s->size++;
+	if (!SetContains(s, elem)) {
+		s->root = doSetAdd(s->root, elem);
+		s->size++;
+	}	
 }
 
 static Node doSetAdd(Node n, int elem) {
@@ -65,9 +71,9 @@ static Node doSetAdd(Node n, int elem) {
 	}
 	
 	if (elem < n->elem) {
-		doSetAdd(n->left, elem);
+		n->left = doSetAdd(n->left, elem);
 	} else if (elem > n->elem) {
-		doSetAdd(n->right, elem);
+		n->right = doSetAdd(n->right, elem);
 	}
 	return n;
 }
@@ -96,11 +102,9 @@ bool SetContains(Set s, int elem) {
 	while (n != NULL) {
 		if (elem == n->elem) {
 			return true;
-		}
-		if (elem < n->elem) {
+		} else if (elem < n->elem) {
 			n = n->left;
-		}
-		if (elem > n->elem) {
+		} else if (elem > n->elem) {
 			n = n->right;
 		}
 	}

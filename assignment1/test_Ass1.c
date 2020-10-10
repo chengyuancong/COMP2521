@@ -18,8 +18,6 @@
 #include <string.h>
 #include "invertedIndex.h" 
 
-
-
 /** Util function below ...
 */
 void printTfIdfList(char *filename, TfIdfList list){
@@ -91,21 +89,25 @@ int main (int argc, char *argv[]) {
 	// =========   Part-2 Testing =========  
 
 
-	TfIdfList list1 = calculateTfIdf(invertedTree, "network" , 141); 
+	TfIdfList list = calculateTfIdf(invertedTree, "mars" , 7); 
 
-	/** Your output in "network.txt" should be 
-	    same as the expected answer in "network_exp.txt"
+	/** Your output in "mars_TfIdfList.txt" should be 
+	    same as the expected answer in "mars_TfIdfList_exp.txt"
 	*/
-	printTfIdfList("network.txt" , list1);
+	printTfIdfList("mars_TfIdfList.txt" , list);
 
 
-	TfIdfList list2 = calculateTfIdf(invertedTree, "computer" , 141); 
 
-	/** Your output in "computer.txt" should be 
-	    same as the expected answer in "computer_exp.txt"
+	TfIdfList list_sun = calculateTfIdf(invertedTree, "sun" , 7); 
+
+	/** Your output in "sun_TfIdfList.txt" should be 
+	    same as the expected answer in "sun_TfIdfList_exp.txt"
 	*/
-	printTfIdfList("computer.txt" , list2);
+	printTfIdfList("sun_TfIdfList.txt" , list_sun);
 
+
+	TfIdfList list_moon = calculateTfIdf(invertedTree, "moon" , 7); 
+	printTfIdfList("moon_TfIdfList.txt" , list_moon );
 		
 	// ---------------------------------------------------------
 
@@ -113,30 +115,14 @@ int main (int argc, char *argv[]) {
 	/**  -----  The following will be available over the weekend -----
 	*/
 
-	char *words[] = { "network", "computer",  NULL }; 
-	TfIdfList listM1 = retrieve(invertedTree, words , 141);
+	char *words[] = { "nasa", "mars", "moon", NULL }; 
+	TfIdfList listM = retrieve(invertedTree, words , 7);
 
-	/** Your output in "network_computer.txt" should be 
-	    same as the expected answer in "network_computer_exp.txt"
+	/** Your output in "nasa_mars_moon.txt" should be 
+	    same as the expected answer in "nasa_mars_moon.txt_exp.txt"
 	*/
-	printTfIdfList("network_computer.txt" , listM1);
+	printTfIdfList("nasa_mars_moon.txt" , listM);
 
-
-	char *words2[] = { "software", "security",  NULL }; 
-	TfIdfList listM2 = retrieve(invertedTree, words2 , 141);
-
-	/** Your output in "software_security.txt" should be 
-	    same as the expected answer in "software_security_exp.txt"
-	*/
-	printTfIdfList("software_security.txt" , listM2);
-
-	char *words3[] = { "database", NULL }; 
-	TfIdfList listM3 = retrieve(invertedTree, words3 , 141);
-
-	/** Your output in "database.txt.txt" should be 
-	    same as the expected answer in "database_exp.txt"
-	*/
-	printTfIdfList("database.txt" , listM3);
 
 
 	/**  I am not providing a free function here, because that will expose some logic 
@@ -151,3 +137,5 @@ int main (int argc, char *argv[]) {
 	return 0;
 
 }
+
+

@@ -6,7 +6,6 @@
 #include <string.h>
 #include <math.h>
 #include "invertedIndex.h"
-#include "wordBSTs.h"
 
 #define MAXLEN 100
 

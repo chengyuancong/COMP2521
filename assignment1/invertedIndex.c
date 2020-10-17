@@ -9,6 +9,8 @@
 
 #define MAXLEN 100
 
+static char *strdup(char *str);
+
 static void trim(char *str);
 static void lower(char *str);
 static void rmvpunct(char *str);
@@ -113,6 +115,13 @@ TfIdfList retrieve(InvertedIndexBST tree, char *searchWords[], int D) {
         }
     }
     return tfIdfList;
+}
+
+static char *strdup(char *str) {
+    int n = strlen(str) + 1;
+    char *dup = malloc(n);
+    if(dup != NULL) strcpy(dup, str);
+    return dup;
 }
 
 

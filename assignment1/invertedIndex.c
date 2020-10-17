@@ -117,13 +117,6 @@ TfIdfList retrieve(InvertedIndexBST tree, char *searchWords[], int D) {
     return tfIdfList;
 }
 
-static char *strdup(char *str) {
-    int n = strlen(str) + 1;
-    char *dup = malloc(n);
-    if(dup != NULL) strcpy(dup, str);
-    return dup;
-}
-
 
 // remove leading and trailing spaces
 static void trim(char *str) {

@@ -9,7 +9,7 @@
 
 #define MAXLEN 100
 
-static char *strdup(char *str);
+static char *strduplicate(char *str);
 
 static void trim(char *str);
 static void lower(char *str);
@@ -117,6 +117,13 @@ TfIdfList retrieve(InvertedIndexBST tree, char *searchWords[], int D) {
     return tfIdfList;
 }
 
+static char *strduplicate(char *str) {
+    int n = strlen(str) + 1;
+    char *dup = malloc(n);
+    if(dup != NULL) strcpy(dup, str);
+    return dup;
+}
+
 
 // remove leading and trailing spaces
 static void trim(char *str) {
@@ -161,7 +168,7 @@ static FileList generateFileList(char *collectionFilename) {
 // generate a FileListNode for a given filename
 static FileList createFileNode(char *filename, FileList fileList) {
     FileList newNode = malloc(sizeof(struct FileListNode));
-    newNode->filename = strdup(filename);
+    newNode->filename = strduplicate(filename);
     newNode->tf = 0;
     newNode->next = fileList;
     return newNode;
@@ -181,11 +188,11 @@ static FileList duplicateFileList(FileList fileList) {
     if (fileList == NULL) return NULL;
     FileList newNode = malloc(sizeof(struct FileListNode));
     FileList newList = newNode;
-    newNode->filename = strdup(fileList->filename);
+    newNode->filename = strduplicate(fileList->filename);
     newNode->tf = fileList->tf;
     for (FileList curr = fileList->next; curr != NULL; curr = curr->next) {
         newNode->next = malloc(sizeof(struct FileListNode));
-        newNode->next->filename = strdup(curr->filename);
+        newNode->next->filename = strduplicate(curr->filename);
         newNode->next->tf = curr->tf;
         newNode = newNode->next;
     }
@@ -207,7 +214,7 @@ static FileList searchFileNode(FileList fileList, char *filename) {
 // generate a inverted index node for a word
 static InvertedIndexBST createInvertedIndexNode(FileList fileList, char *word) {
     InvertedIndexBST newNode = malloc(sizeof(struct InvertedIndexNode));
-    newNode->word = strdup(word);
+    newNode->word = strduplicate(word);
     newNode->fileList = duplicateFileList(fileList);
     newNode->left = NULL;
     newNode->right = NULL;
@@ -286,7 +293,7 @@ static double calculateIdf(FileList fileList, int D) {
 // create a new TfIdfNode 
 static TfIdfList createTfIdfNode(char *filename, double tfidf, TfIdfList tfIdfList) {
     TfIdfList newNode = malloc(sizeof(struct TfIdfNode));
-    newNode->filename = strdup(filename);
+    newNode->filename = strduplicate(filename);
     newNode->tfIdfSum = tfidf;
     newNode->next = tfIdfList;
     return newNode;

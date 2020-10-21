@@ -130,7 +130,7 @@ static void trim(char *str) {
     int start = 0;
     while (isspace(str[start])) start++;
     int end = strlen(str) - 1;
-    while (isspace(str[start])) end--;
+    while (isspace(str[end])) end--;
     int i = 0;
     for (int j = start; j <= end; i++, j++) str[i] = str[j];
     str[i] = '\0';

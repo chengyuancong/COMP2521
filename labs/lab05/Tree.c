@@ -90,9 +90,19 @@ static Node doInsert(Node n, Time time) {
     n->height = 1 + max(height(n->left), height(n->right));
     
     // rebalance the tree
-    // TODO: Add your code here and change
-    //       the return statement if needed
-
+    int left_height = height(n->left);
+    int right_height = height(n->right);
+    if (left_height - right_height > 1) {
+        if (TimeCmp(time, n->left->time) > 0) {
+            n->left = rotateLeft(n->left);
+        }
+        n = rotateRight(n);
+    } else if (right_height - left_height > 1) {
+        if (TimeCmp(time, n->right->time) < 0) {
+            n->right = rotateRight(n->right);
+        }
+        n = rotateLeft(n);
+    }
     return n;
 }
 

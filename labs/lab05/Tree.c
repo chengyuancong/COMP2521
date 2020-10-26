@@ -113,19 +113,29 @@ static Node newNode(Time time) {
 // Rotates  the  given  subtree left and returns the root of the updated
 // subtree.
 static Node rotateLeft(Node n) {
-    // TODO: Add your code here and change
-    //       the return statement if needed
-
-    return n;
+    if (n == NULL || n->right == NULL) {
+        return n;
+    }
+    Node n2 = n->right;
+    n->right = n2->left;
+    n2->left = n;
+    n->height = 1 + max(height(n->left), height(n->right));
+    n2->height = 1 + max(height(n2->left), height(n2->right));
+    return n2;
 }
 
 // Rotates the given subtree right and returns the root of  the  updated
 // subtree.
 static Node rotateRight(Node n) {
-    // TODO: Add your code here and change
-    //       the return statement if needed
-    
-    return n;
+    if (n == NULL || n->left == NULL) {
+        return n;
+    }
+    Node n2 = n->left;
+    n->left = n2->right;
+    n2->right = n;
+    n->height = 1 + max(height(n->left), height(n->right));
+    n2->height = 1 + max(height(n2->left), height(n2->right));
+    return n2;
 }
 
 // Returns  the height of a subtree while assuming that the height field

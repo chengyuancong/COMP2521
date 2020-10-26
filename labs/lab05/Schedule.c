@@ -39,10 +39,43 @@ int  ScheduleCount(Schedule s) {
 // Attempts to schedule a new landing time. Returns true if the time was
 // successfully added, and false otherwise.
 bool ScheduleAdd(Schedule s, Time t) {
-    // TODO: Modify the following code
-    TreeInsert(s->times, t);
-    s->count++;
-    return true;
+    // range of new landing time
+    Time before = TimeSubtractMinutes(t, 10);
+    Time after = TimeAddMinutes(t, 10);
+
+    // get latest and earliest landing time
+    Time latest = TreeFloor(s->times, t);
+    Time earliest = TreeCeiling(s->times, t);
+
+    if (latest != NULL && earliest != NULL) {
+        if (TimeCmp(latest, before) < 0 && TimeCmp(earliest, after) > 0) {
+            TreeInsert(s->times, t);
+            s->count++;
+            return true;
+        } else {
+            return false;
+        }
+    } else if (latest == NULL && earliest != NULL) {
+        if (TimeCmp(earliest, after) > 0) {
+            TreeInsert(s->times, t);
+            s->count++;
+            return true;
+        } else {
+            return false;
+        }
+    } else if (latest != NULL && earliest == NULL) {
+        if (TimeCmp(latest, before) < 0) {
+            TreeInsert(s->times, t);
+            s->count++;
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        TreeInsert(s->times, t);
+        s->count++;
+        return true;
+    }   
 }
 
 // Shows  all  the landing times in the schedule. If mode is 1, only the

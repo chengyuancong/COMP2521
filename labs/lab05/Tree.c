@@ -19,6 +19,9 @@ struct tree {
     Node root;
 };
 
+static Time latest = NULL;
+static Time earliest = NULL;
+
 ////////////////////////////////////////////////////////////////////////
 // Function Prototypes
 
@@ -29,6 +32,8 @@ static Node rotateRight(Node n);
 static int  height(Node n);
 static int  max(int a, int b);
 static Node newNode(Time time);
+static void doTreeFloor(Node n, Time time);
+static void doTreeCeiling(Node n, Time time);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor and Destructor
@@ -169,24 +174,40 @@ static int max(int a, int b) {
 // the  given  time,  or  NULL if no such time exists. The returned time
 // should not be modified or freed.
 Time TreeFloor(Tree t, Time time) {
-    // TODO: Add your code here and change
-    //       the return statement if needed
-    //       You can create helper functions
-    //       if needed
-
-    return NULL;
+    latest = NULL;
+    doTreeFloor(t->root, time);
+    return latest;
 }
 
 // Returns the earliest time in the tree that is later than or equal  to
 // the  given  time,  or  NULL if no such time exists. The returned time
 // should not be modified or freed.
 Time TreeCeiling(Tree t, Time time) {
-    // TODO: Add your code here and change
-    //       the return statement if needed
-    //       You can create helper functions
-    //       if needed
+    earliest = NULL;
+    doTreeCeiling(t->root, time);
+    return earliest;
+}
 
-    return NULL;
+static void doTreeFloor(Node n, Time time) {
+    if (n != NULL) {
+        if (TimeCmp(n->time, time) > 0) {
+            doTreeFloor(n->left, time);
+        } else {
+            latest = n->time;
+            doTreeFloor(n->right, time);
+        }
+    }
+}
+
+static void doTreeCeiling(Node n, Time time) {
+    if (n != NULL) {
+        if (TimeCmp(n->time, time) < 0) {
+            doTreeCeiling(n->right, time);
+        } else {
+            earliest = n->time;
+            doTreeCeiling(n->left, time);
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////

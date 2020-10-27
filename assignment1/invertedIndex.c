@@ -9,29 +9,40 @@
 
 #define MAXLEN 100
 
+// strdup()
 static char *strduplicate(char *str);
 
+// helper functions for normaliseWord()
 static void trim(char *str);
 static void lower(char *str);
 static void rmvpunct(char *str);
 
+// helper functions for FileList
 static FileList generateFileList(char *collectionFilename);
 static FileList createFileNode(char *filename, FileList fileList);
 static FileList insertFileNode(FileList fileList ,char* filename);
 static FileList duplicateFileList(FileList fileList);
 static FileList searchFileNode(FileList fileList, char *filename);
+
+// helper functions for InvertedIndex
 static InvertedIndexBST createInvertedIndexNode(FileList fileList, char *word);
 static InvertedIndexBST insertInvertedIndexNode(InvertedIndexBST invertedIndex, InvertedIndexBST invertedIndexNode);
 static InvertedIndexBST searchInvertedIndexNode(InvertedIndexBST invertedIndex, char *word);
 static void calculateTf(InvertedIndexBST invertedIndex, char *filename, int wordNum);
 
+// helper functions for printInvertedIndex()
 static void printFormattedInfo(InvertedIndexBST tree, FILE *outputFile);
 static void printTf(FileList fileList, FILE *outputFile);
 
+// helper functions for TfIdfList
 static double calculateIdf(FileList fileList, int D);
 static TfIdfList createTfIdfNode(char *filename, double tfidf, TfIdfList tfidfList);
 static TfIdfList insertTfIdfNode(TfIdfList tfIdfList, char *filename, double tfidf);
 
+
+///////////////////////////////////////////////////////////////////////////////////
+//                            Functions for Part 1                               //
+///////////////////////////////////////////////////////////////////////////////////
 
 char *normaliseWord(char *str) {
     trim(str);
@@ -70,6 +81,10 @@ InvertedIndexBST generateInvertedIndex(char *collectionFilename) {
     free(word);
     return invertedIndex;
 }
+
+///////////////////////////////////////////////////////////////////////////////////
+//                            Functions for Part 2                               //
+///////////////////////////////////////////////////////////////////////////////////
 
 void printInvertedIndex(InvertedIndexBST tree) {
     FILE *output = fopen("invertedIndex.txt", "w");
@@ -117,6 +132,12 @@ TfIdfList retrieve(InvertedIndexBST tree, char *searchWords[], int D) {
     return tfIdfList;
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////
+//                             helper functions                                //
+/////////////////////////////////////////////////////////////////////////////////
+
+// malloc and copy a string
 static char *strduplicate(char *str) {
     int n = strlen(str) + 1;
     char *dup = malloc(n);
@@ -136,12 +157,14 @@ static void trim(char *str) {
     str[i] = '\0';
 }
 
+
 // convert all characters to lowercase
 static void lower(char *str) {
     for (int i = 0; str[i] != '\0'; i++) str[i] = tolower(str[i]);
 }
 
-// remove the following punctuation marks, if they appear at the end of a word
+
+// remove punctuation marks '.' ',' ';' '?', if they appear at the end of a word
 static void rmvpunct(char *str) {
     int end = strlen(str) - 1;
     if (str[end] == '.' || str[end] == ','
@@ -165,6 +188,7 @@ static FileList generateFileList(char *collectionFilename) {
     return sampleFileList;
 }
 
+
 // generate a FileListNode for a given filename
 static FileList createFileNode(char *filename, FileList fileList) {
     FileList newNode = malloc(sizeof(struct FileListNode));
@@ -173,6 +197,7 @@ static FileList createFileNode(char *filename, FileList fileList) {
     newNode->next = fileList;
     return newNode;
 }
+
 
 // insert a FileListNode into Filelist according to alphabatic order
 static FileList insertFileNode(FileList fileList ,char *filename) {
@@ -183,7 +208,8 @@ static FileList insertFileNode(FileList fileList ,char *filename) {
     return fileList;
 }
 
-// duplicate the filelist for every node in inverted index
+
+// duplicate the filelist for a new node in inverted index
 static FileList duplicateFileList(FileList fileList) {
     if (fileList == NULL) return NULL;
     FileList newNode = malloc(sizeof(struct FileListNode));
@@ -200,6 +226,7 @@ static FileList duplicateFileList(FileList fileList) {
     return newList;
 }
 
+
 // search a node containing a filename in a file list
 static FileList searchFileNode(FileList fileList, char *filename) {
     if (fileList == NULL) {
@@ -211,6 +238,7 @@ static FileList searchFileNode(FileList fileList, char *filename) {
     }
 }
 
+
 // generate a inverted index node for a word
 static InvertedIndexBST createInvertedIndexNode(FileList fileList, char *word) {
     InvertedIndexBST newNode = malloc(sizeof(struct InvertedIndexNode));
@@ -220,6 +248,7 @@ static InvertedIndexBST createInvertedIndexNode(FileList fileList, char *word) {
     newNode->right = NULL;
     return newNode;
 }
+
 
 // insert a inverted index node into invertedIndexBST according to alphabatic order
 static InvertedIndexBST insertInvertedIndexNode(InvertedIndexBST invertedIndex, InvertedIndexBST invertedIndexNode) {
@@ -236,6 +265,7 @@ static InvertedIndexBST insertInvertedIndexNode(InvertedIndexBST invertedIndex, 
     }
 }
 
+
 // search a node containing a word in inverted index
 static InvertedIndexBST searchInvertedIndexNode(InvertedIndexBST invertedIndex, char *word) {
     if (invertedIndex == NULL) {
@@ -249,6 +279,7 @@ static InvertedIndexBST searchInvertedIndexNode(InvertedIndexBST invertedIndex, 
     }
 }
 
+
 // calculate tf value for every word in inverted index after a file has been read 
 // and number of words has been counted
 static void calculateTf(InvertedIndexBST invertedIndex, char *filename, int wordNum) {
@@ -260,6 +291,7 @@ static void calculateTf(InvertedIndexBST invertedIndex, char *filename, int word
     }
 }
 
+
 // traverse every node in the tree and print formatted tf values for a word
 static void printFormattedInfo(InvertedIndexBST tree, FILE *outputFile) {
     if (tree != NULL) {
@@ -270,7 +302,8 @@ static void printFormattedInfo(InvertedIndexBST tree, FILE *outputFile) {
     }
 }
 
-// print formatted tf values in every file (ignore tf == 0)
+
+// print formatted tf values in every file (ignore file if tf == 0)
 static void printTf(FileList fileList, FILE *outputFile) {
     for (FileList curr = fileList; curr != NULL; curr = curr->next) {
         if (curr->tf != 0) {
@@ -279,6 +312,7 @@ static void printTf(FileList fileList, FILE *outputFile) {
     }
     fprintf(outputFile, "\n"); 
 }
+
 
 // calculate a word's idf value from a given fileList
 static double calculateIdf(FileList fileList, int D) {
@@ -290,6 +324,7 @@ static double calculateIdf(FileList fileList, int D) {
     return idf;
 }
 
+
 // create a new TfIdfNode 
 static TfIdfList createTfIdfNode(char *filename, double tfidf, TfIdfList tfIdfList) {
     TfIdfList newNode = malloc(sizeof(struct TfIdfNode));
@@ -298,6 +333,7 @@ static TfIdfList createTfIdfNode(char *filename, double tfidf, TfIdfList tfIdfLi
     newNode->next = tfIdfList;
     return newNode;
 }
+
 
 // insert a new TfIdfNode to a tfIdfList according to decending tfidf order
 static TfIdfList insertTfIdfNode(TfIdfList tfIdfList, char *filename, double tfidf) {

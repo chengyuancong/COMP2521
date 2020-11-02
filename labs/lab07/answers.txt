@@ -8,31 +8,38 @@ NOTE:
   FbIsFriend
 ===============
 
-- Worst case time complexity: O(...)
+- Worst case time complexity: O(log n)
 
-- Explanation: ...
+- Explanation: time complexity of nameToId is log n as it searches in a AVL tree.
+Referring to a 2d array is O(1). For this funciton O(2log n + 1) == O(log n).
 
 ===============
 FbMutualFriends
 ===============
 
-- Worst case time complexity: O(...)
+- Worst case time complexity: O(n)
 
-- Explanation: ...
+- Explanation: Iteration through users is O(n). Referring to array, ListAppend and 
+ListNew are all O(1). So this function is O(n).
 
 ===============
  FbFriendRecs1
 ===============
 
-- Worst case time complexity: O(...)
+- Worst case time complexity: O(n^2)
 
-- Explanation: ...
+- Explanation: Calloc is O(n). Loop for calculating mutual friends is O(n^2) as 
+FbMutualFriends is called in loop. Printing loop is also O(n^2). So time complexity
+of this function is O(n^2).
 
 ===============
  FbFriendRecs2
 ===============
 
-- Worst case time complexity: O(...)
+- Worst case time complexity: O(n^3)
 
-- Explanation: ...
+- Explanation: Loop for calculating path length called findMinPathLen(). 
+findMinPathLen() is O(n^2) as there is a nested loop. So loop for calculating
+path length is O(n^3). Loop for printing is O(n). Time complexity for this funciton
+is O(n^3).
 

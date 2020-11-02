@@ -26,6 +26,7 @@ struct fb {
 
 static char *myStrdup(char *s);
 static int   nameToId(Fb fb, char *name);
+static int findMinPathLen(Fb fb, int srcId, int destId);
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -148,8 +149,14 @@ int  FbNumFriends(Fb fb, char *name) {
 // Your tasks
 
 List FbMutualFriends(Fb fb, char *name1, char *name2) {
-    // TODO: Add your code here
     List l = ListNew();
+    int id1 = nameToId(fb, name1);
+    int id2 = nameToId(fb, name2);
+    for (int i = 0; i < fb->numPeople; i++) {
+        if (fb->friends[i][id1] && fb->friends[i][id2]) {
+            ListAppend(l, fb->names[i]);
+        }
+    }
     return l;
 }
 

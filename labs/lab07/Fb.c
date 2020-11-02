@@ -161,7 +161,28 @@ List FbMutualFriends(Fb fb, char *name1, char *name2) {
 }
 
 void FbFriendRecs1(Fb fb, char *name) {
-    // TODO: Add your code here
+    int id = nameToId(fb, name);
+    int *mutualNum = calloc(fb->numPeople, sizeof(int));
+
+    // calculate how many mutual friends and store in int mutualNum[]
+    for (int i = 0; i < fb->numPeople; i++) {
+        if (i != id && !fb->friends[i][id]) {
+            List l = FbMutualFriends(fb, fb->names[i], fb->names[id]);
+            mutualNum[i] = ListSize(l);
+            ListFree(l);
+        }
+    }
+
+    // print num of mutual friends in decending order
+    printf("%s's friend recommendations\n", name);
+    for (int i = fb->numPeople-2; i > 0; i--) {
+        for (int j = 0; j < fb->numPeople; j++) {
+            if (mutualNum[j] == i) {
+                printf("\t%-20s%4d mutual friends\n", fb->names[j], i);
+            }
+        }
+    }
+    free(mutualNum);
 }
 
 void FbFriendRecs2(Fb fb, char *name) {

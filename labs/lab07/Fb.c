@@ -26,7 +26,8 @@ struct fb {
 
 static char *myStrdup(char *s);
 static int   nameToId(Fb fb, char *name);
-static int findMinPathLen(Fb fb, int srcId, int destId);
+static int findMinPathLen(Fb fb, int src, int dest);
+static int getPathLen(int *visited, int src, int dest);
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -186,7 +187,28 @@ void FbFriendRecs1(Fb fb, char *name) {
 }
 
 void FbFriendRecs2(Fb fb, char *name) {
-    // TODO: Add your code here
+    int id = nameToId(fb, name);
+    int *pathLen = calloc(fb->numPeople, sizeof(int));
+
+    // caluculate the path length for each name and store in int pathLen[]
+    for (int i = 0; i < fb->numPeople; i++) {
+        if (i != id && !fb->friends[i][id]) {
+            pathLen[i] = findMinPathLen(fb, id, i);
+        }
+    }
+
+    // print closer users
+    printf("%s's friend recommendations\n", name);
+    int recsNum = 0;
+    for (int len = 2; len < fb->numPeople && recsNum < 20; len++) {
+        for (int j = 0; j < fb->numPeople; j++) {
+            if (pathLen[j] == len) {
+                printf("\t%s\n", fb->names[j]);
+                recsNum++;
+            }
+        }
+    }
+    free(pathLen);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -210,3 +232,48 @@ static int nameToId(Fb fb, char *name) {
     return MapGet(fb->nameToId, name);
 }
 
+// use BFS path finding algorithm to find the shortest path length
+static int findMinPathLen(Fb fb, int src, int dest) {
+    Queue q = QueueNew();
+    int pathLen = 0;
+    // store previously visited node for each vertex 0..nV-1
+    int *visited = malloc(fb->numPeople * sizeof(int));
+    for (int i = 0; i < fb->numPeople; i++) {
+        visited[i] = -1;
+    }
+    int found = false;
+    visited[src] = src;
+    QueueEnqueue(q, src);
+    while (!found && !QueueIsEmpty(q)) {
+        int curr = QueueDequeue(q);
+        if (curr == dest) {
+            found = true;
+        } else {
+            for (int adj = 0; adj < fb->numPeople; adj++) {
+                if (fb->friends[curr][adj] && visited[adj] == -1) {
+                    visited[adj] = curr;
+                    QueueEnqueue(q, adj);
+                }
+            }
+        }
+    }
+    if (found) {
+        pathLen = getPathLen(visited, src, dest);
+    } else {
+        pathLen = -1;
+    }
+    QueueFree(q);
+    free(visited);
+    return pathLen;
+}
+
+// calculete path length from visited record array
+static int getPathLen(int *visited, int src, int dest) {
+    int curr = dest;
+    int pathLen = 0;
+    while (curr != src) {
+        pathLen++;
+        curr = visited[curr];
+    }
+    return pathLen;
+}

@@ -36,10 +36,8 @@ of this function is O(n^2).
  FbFriendRecs2
 ===============
 
-- Worst case time complexity: O(n^3)
+- Worst case time complexity: O(n^2)
 
-- Explanation: Loop for calculating path length called findMinPathLen(). 
-findMinPathLen() is O(n^2) as there is a nested loop. So loop for calculating
-path length is O(n^3). Loop for printing is O(n). Time complexity for this funciton
-is O(n^3).
+- Explanation: Use BFS to find friends' friends and print them from closest to farest 
+one by one. Time complexity of funciton is O(n^2), same with which of BFS.
 

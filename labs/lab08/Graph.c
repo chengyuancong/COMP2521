@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "Graph.h"
 #include "Queue.h"
@@ -16,6 +17,7 @@ typedef struct GraphRep {
 } GraphRep;
 
 static int validVertex(Graph g, Vertex v);
+static int getPathLen(int *visited, int src, int dest);
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -84,9 +86,37 @@ void GraphRemoveEdge(Graph g, Vertex v, Vertex w)
 int findPath(Graph g, Vertex src, Vertex dest, int max, int *path)
 {
 	assert(g != NULL);
-	
-	// TODO
-	return 0;
+	// initialise visited list
+	int *visited = malloc(g->nV * sizeof(int));
+	for (Vertex i = 0; i < g->nV; i++) visited[i] = -1;
+	bool found = false;
+	visited[src] = src;
+	Queue q = QueueNew();
+	QueueEnqueue(q, src);
+	while (!QueueIsEmpty(q) && !found) {
+		Vertex curr = QueueDequeue(q);
+		if (curr == dest) {
+			found = true;
+		} else {
+			for (int i = 0; i < g->nV; i++) {
+				if (g->edges[curr][i] <= max && visited[i] == -1) {
+					visited[i] = curr;
+					QueueEnqueue(q, i);
+				} 
+			}
+		}
+	}
+	if (found) {
+		int len = getPathLen(visited, src, dest);
+		Vertex curr = dest;
+		for (int i = len; i >= 0; i--) {
+			path[i] = curr;
+			curr = visited[curr];
+		}
+		return len+1;
+	} else {
+		return 0;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -115,3 +145,13 @@ static int validVertex(Graph g, Vertex v)
 	return (g != NULL && v >= 0 && v < g->nV);
 }
 
+// calculete path length from visited record array		
+static int getPathLen(int *visited, int src, int dest) {		
+    int curr = dest;		
+    int pathLen = 0;		
+    while (curr != src) {		
+        pathLen++;		
+        curr = visited[curr];		
+    }		
+    return pathLen;		
+}

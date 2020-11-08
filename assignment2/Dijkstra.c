@@ -24,14 +24,14 @@ ShortestPaths dijkstra(Graph g, Vertex src) {
 	sps.src = src;
 	sps.dist = malloc(nV * sizeof(int));
 	sps.pred = malloc(nV * sizeof(PredList));
-	for (int i = 0; i < nV; i++) {
+	for (Vertex i = 0; i < nV; i++) {
 		sps.dist[i] = INFINITY;
 		sps.pred[i] = NULL;
 	}
 	sps.dist[src] = 0;
 	// initialise priority queue
 	PQ vSet = PQNew();
-	for (int i = 0; i < nV; i++) {
+	for (Vertex i = 0; i < nV; i++) {
 		PQInsert(vSet, i, sps.dist[i]);
 	}
 	// relaxaion
@@ -50,7 +50,7 @@ ShortestPaths dijkstra(Graph g, Vertex src) {
 		}
 	}
 	// set infinity dist to 0
-	for (int i = 0; i < nV; i++) {
+	for (Vertex i = 0; i < nV; i++) {
 		if (sps.dist[i] == INFINITY) {
 			sps.dist[i] = 0;
 		}		
@@ -100,7 +100,7 @@ void showShortestPaths(ShortestPaths sps) {
 
 void freeShortestPaths(ShortestPaths sps) {
 	free(sps.dist);
-	for (int i = 0; i < sps.numNodes; i++) {
+	for (Vertex i = 0; i < sps.numNodes; i++) {
 		sps.pred[i] = freePredList(sps.pred[i]);
 	}
 	free(sps.pred);

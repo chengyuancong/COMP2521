@@ -55,6 +55,7 @@ ShortestPaths dijkstra(Graph g, Vertex src) {
 			sps.dist[i] = 0;
 		}		
 	}
+	PQFree(vSet);
 	return sps;
 }
 

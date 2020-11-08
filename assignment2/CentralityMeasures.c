@@ -9,10 +9,12 @@
 #include "Dijkstra.h"
 #include "PQ.h"
 
+typedef PredNode* PredList;
+
 // 2d array for storing the number of shortest path between two vertex
 static int **pathNum = NULL;
 // pred list array for current src
-static PredNode **preds = NULL;
+static PredList*preds = NULL;
 // src and dest in recursively restoring path from t to s
 static Vertex src = 0;
 static Vertex dest = 0;
@@ -138,7 +140,7 @@ static void countPathNum(Vertex curr) {
 	if (curr == src) {
 		pathNum[src][dest]++;
 	} else {
-		for (PredNode *pred = preds[curr]; pred != NULL; pred = pred->next) {
+		for (PredList pred = preds[curr]; pred != NULL; pred = pred->next) {
 			countPathNum(pred->v);
 		}
 	}

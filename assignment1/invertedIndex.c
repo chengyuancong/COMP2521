@@ -87,7 +87,7 @@ InvertedIndexBST generateInvertedIndex(char *collectionFilename) {
 ///////////////////////////////////////////////////////////////////////////////////
 
 void printInvertedIndex(InvertedIndexBST tree) {
-    FILE *output = fopen("invertedIndex.txt", "w");
+    FILE *output = fopen("tests/invertedIndex.txt", "w");
     printFormattedInfo(tree, output);
     fclose(output);
 }

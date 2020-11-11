@@ -9,9 +9,8 @@
 !.gitignore
 !Makefile
 !*.sh
+!*.exp
+!*.in
 
 # except all dirs
 !*/
-
-# ignore text files in assignment 1
-assignment1/*.txt

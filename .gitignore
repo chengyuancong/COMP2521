@@ -8,9 +8,14 @@
 !*.md
 !.gitignore
 !Makefile
+
+# test files
 !*.sh
 !*.exp
+!*.out
 !*.in
+!autotest
+!0[0-9]
 
 # except all dirs
 !*/

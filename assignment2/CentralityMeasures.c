@@ -82,6 +82,7 @@ NodeValues betweennessCentrality(Graph g) {
 					if (t != v && t != s) {
 						double st =  pathNum[s][t];
 						double stv = 0;
+						// path pass v is shortest only if the sum is also shortest
 						if (spss[s].dist[v] + spss[v].dist[t] == spss[s].dist[t]) {
 							stv = pathNum[s][v] * pathNum[v][t];
 						}

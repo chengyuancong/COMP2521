@@ -60,20 +60,34 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
             }
         }
         // merge minI into minJ
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < i; j++) {
-                if (i == minI || j == minI) {
-                    continue;
+        if (method == SINGLE_LINKAGE) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < i; j++) {
+                    if (i == minI || j == minI) {
+                        continue;
+                    }
+                    if (i == minJ) {
+                        dist[i][j] = dist[j][i] = minimum(dist[minJ][j], dist[minI][j]);
+                    }
+                    if (j == minJ) {
+                        dist[i][j] = dist[j][i] = minimum(dist[i][minJ], dist[i][minI]);
+                    }
                 }
-                if (i == minJ) {
-                    dist[i][j] = dist[j][i] = method == SINGLE_LINKAGE ? 
-                    minimum(dist[minJ][j], dist[minI][j]) : maximum(dist[minJ][j], dist[minI][j]);
+            }            
+        } else {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < i; j++) {
+                    if (i == minI || j == minI) {
+                        continue;
+                    }
+                    if (i == minJ) {
+                        dist[i][j] = dist[j][i] = maximum(dist[minJ][j], dist[minI][j]);
+                    }
+                    if (j == minJ) {
+                        dist[i][j] = dist[j][i] = maximum(dist[i][minJ], dist[i][minI]);
+                    }
                 }
-                if (j == minJ) {
-                    dist[i][j] = dist[j][i] = method == SINGLE_LINKAGE ? 
-                    minimum(dist[i][minJ], dist[i][minI]) : maximum(dist[i][minJ], dist[i][minI]);
-                }
-            }
+            }       
         }
         // clear minI
         for (int i = 0; i < n; i++) {

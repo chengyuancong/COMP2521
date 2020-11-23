@@ -3,11 +3,9 @@
 
 int numDupesInOrderedList(List l) {
 	Node head = l->head;
-	if (head == NULL || head->next == NULL) {
-		return 0;
-	} else {
+	int duplicated = 0;
+	if (head != NULL && head->next != NULL) {
 		int num = head->value;
-		int duplicated = 0;
 		Node curr = head->next;
 		while (curr != NULL) {
 			if (curr->value == num) {
@@ -17,7 +15,7 @@ int numDupesInOrderedList(List l) {
 			}
 			curr = curr->next;
 		}
-		return duplicated;
 	}
+	return duplicated;
 }
 

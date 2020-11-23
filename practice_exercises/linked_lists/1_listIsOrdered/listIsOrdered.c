@@ -3,9 +3,7 @@
 
 bool listIsOrdered(List l) {
 	Node head = l->head;
-	if (head == NULL || head->next == NULL || head->next->next == NULL) {
-		return true;
-	} else {
+	if (head != NULL && head->next != NULL && head->next->next != NULL) {
 		Node curr = head;
 		Node next = head->next;
 		int seq = 0;
@@ -17,19 +15,17 @@ bool listIsOrdered(List l) {
 			curr = curr->next;
 			next = next->next;
 		}
-		if (seq == 0) {						// all equal
-			return true;
-		} else {							// not all equal
+		if (seq != 0) {
 			while (next != NULL) {
-				if (curr->value != next->value && (next->value - curr->value)*seq < 0) {
+				if ((next->value - curr->value)*seq < 0) {
 					return false;
 				}
 				curr = curr->next;
 				next = next->next;
 			}
 		}
-		return true;
 	}
+	return true;
 }
 
 

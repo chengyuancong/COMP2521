@@ -6,11 +6,11 @@ static Node listAppend(Node head, int value);
 
 List listSetUnion(List s1, List s2) {
 	List new = newList();
+	// copy s1
 	for (Node curr = s1->head; curr != NULL; curr = curr->next) {
-		if (!listContain(new->head, curr->value)) {
-			new->head = listAppend(new->head, curr->value);
-		}
+		new->head = listAppend(new->head, curr->value);
 	}
+	// check membership and append s2
 	for (Node curr = s2->head; curr != NULL; curr = curr->next) {
 		if (!listContain(new->head, curr->value)) {
 			new->head = listAppend(new->head, curr->value);

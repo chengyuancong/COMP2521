@@ -33,10 +33,9 @@ static Node listAppend(Node head, int value) {
 	// recursive
 	if (head == NULL) {
 		return newNode(value);
-	} else {
-		head->next = listAppend(head->next, value);
-		return head;
 	}
+	head->next = listAppend(head->next, value);
+	return head;
 	/*
 	// iterative
 	if (head == NULL) {

@@ -15,11 +15,9 @@ int listDeleteLargest(List l) {
 		l->head = head->next;
 		free(head);
 	} else {
-		Node prev = NULL;
-		for (Node curr = head; curr != NULL; curr = curr->next) {
-			if (curr->next == max) {
-				prev = curr;
-			}
+		Node prev = head;
+		while (prev->next != max) {
+			prev = prev->next;
 		}
 		prev->next = max->next;
 		num = max->value;

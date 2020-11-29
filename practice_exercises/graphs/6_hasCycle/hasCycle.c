@@ -25,7 +25,30 @@ bool hasCycle(Graph g) {
     return result;
 }
 
-static bool dfsCycleCheck(Graph g, int nV, int curr, int *visited) {
+// iteratively, using stack in dfs
+static bool dfsCycleCheck(Graph g, int nV, int src, int *visited) {
+    bool result = false;
+    Stack s = StackNew();
+    StackPush(s, src);
+    while (!StackIsEmpty(s)) {
+        int curr = StackPop(s);
+        for (int i = 0; i < nV; i++) {
+            if (GraphIsAdjacent(g, curr, i)) {
+                if (visited[i] == -1) {
+                    StackPush(s, i);
+                    visited[i] = curr;
+                } else {
+                    if (i != visited[curr]) result = true;
+                }
+            }         
+        }
+    }
+    StackDrop(s);
+    return result;
+}
+
+// recursive dfs
+/* static bool dfsCycleCheck(Graph g, int nV, int curr, int *visited) {
     for (int i = 0; i < nV; i++) {
         if (GraphIsAdjacent(g, curr, i)) {
             if (visited[i] == -1) {
@@ -37,4 +60,4 @@ static bool dfsCycleCheck(Graph g, int nV, int curr, int *visited) {
         }
     }
     return false;
-}
+} */

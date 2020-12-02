@@ -19,8 +19,6 @@ struct tree {
     Node root;
 };
 
-static Time latest = NULL;
-static Time earliest = NULL;
 
 ////////////////////////////////////////////////////////////////////////
 // Function Prototypes
@@ -32,8 +30,8 @@ static Node rotateRight(Node n);
 static int  height(Node n);
 static int  max(int a, int b);
 static Node newNode(Time time);
-static void doTreeFloor(Node n, Time time);
-static void doTreeCeiling(Node n, Time time);
+static Time doTreeFloor(Node n, Time time, Time closest);
+static Time doTreeCeiling(Node n, Time time, Time closest);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor and Destructor
@@ -174,39 +172,39 @@ static int max(int a, int b) {
 // the  given  time,  or  NULL if no such time exists. The returned time
 // should not be modified or freed.
 Time TreeFloor(Tree t, Time time) {
-    latest = NULL;
-    doTreeFloor(t->root, time);
-    return latest;
+    return doTreeFloor(t->root, time, NULL);
 }
 
 // Returns the earliest time in the tree that is later than or equal  to
 // the  given  time,  or  NULL if no such time exists. The returned time
 // should not be modified or freed.
 Time TreeCeiling(Tree t, Time time) {
-    earliest = NULL;
-    doTreeCeiling(t->root, time);
-    return earliest;
+    return doTreeCeiling(t->root, time, NULL);
 }
 
-static void doTreeFloor(Node n, Time time) {
-    if (n != NULL) {
-        if (TimeCmp(n->time, time) > 0) {
-            doTreeFloor(n->left, time);
-        } else {
-            latest = n->time;
-            doTreeFloor(n->right, time);
-        }
+static Time doTreeFloor(Node n, Time time, Time closest) {
+    if (n == NULL) {
+        return closest;
+    }
+    if (TimeCmp(n->time, time) == 0) {
+        return n->time;
+    } else if (TimeCmp(n->time, time) < 0) {
+        return doTreeFloor(n->right, time, n->time);
+    } else {
+        return doTreeFloor(n->left, time, closest);
     }
 }
 
-static void doTreeCeiling(Node n, Time time) {
-    if (n != NULL) {
-        if (TimeCmp(n->time, time) < 0) {
-            doTreeCeiling(n->right, time);
-        } else {
-            earliest = n->time;
-            doTreeCeiling(n->left, time);
-        }
+static Time doTreeCeiling(Node n, Time time, Time closest) {
+    if (n == NULL) {
+        return closest;
+    }
+    if (TimeCmp(n->time, time) == 0) {
+        return n->time;
+    } else if (TimeCmp(n->time, time) > 0) {
+        return doTreeCeiling(n->left, time, n->time);
+    } else {
+        return doTreeCeiling(n->right, time, closest);
     }
 }
 

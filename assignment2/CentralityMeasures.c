@@ -1,125 +1,122 @@
-// Centrality Measures ADT implementation
+// Centrality Measures API implementation
 // COMP2521 Assignment 2
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <limits.h>
 
 #include "CentralityMeasures.h"
 #include "Dijkstra.h"
+#include "Graph.h"
 #include "PQ.h"
 
-typedef PredNode* PredList;
+#define INFINITY INT_MAX
 
-// 2d array for storing the number of shortest path between two vertex
-static int **pathNum = NULL;
-// pred list array for current src
-static PredList*preds = NULL;
-// src and dest in recursively restoring path from t to s
-static Vertex src = 0;
-static Vertex dest = 0;
-
-
-// Helper functions for counting numbers of shortest paths
-static void initialisePathNum(int n);
-static void freePathNum(int n);
-static void countPathNum(Vertex curr);
-
+static int countPathNum(ShortestPaths sps, int** pathNums, Vertex src, Vertex dest);
 
 NodeValues closenessCentrality(Graph g) {
-	int N = GraphNumVertices(g); 		// number of nodes in the graph.
+	// Initialise NodeValues
 	NodeValues nvs;
-	nvs.numNodes = N;
-	nvs.values = malloc(N * sizeof(double));
-	for (int i = 0; i < N; i++){
-		double n = 0;					// number of nodes that Vertex i can reach
-		double distSum = 0;				// sum of shortest-path distance for i can reach j
-		ShortestPaths sps = dijkstra(g, i);
-		for (int j = 0; j < N; j++) {
-			distSum += sps.dist[j];
-			if (sps.dist[j] != 0) n++;
+	nvs.numNodes = GraphNumVertices(g);
+	nvs.values = malloc(nvs.numNodes * sizeof(double));
+
+	// Calculate Closeness Centrality via every vertex's sps
+	for (Vertex u = 0; u < nvs.numNodes; u++) {
+		ShortestPaths sps = dijkstra(g, u);
+		double n = 0;
+		double distSum = 0;
+		for (Vertex v = 0; v < nvs.numNodes; v++) {
+			// If v is reachable from u
+			if (sps.dist[v] != INFINITY) {
+				n++;
+				distSum += sps.dist[v];
+			}
 		}
-		n++;							// n should includes itself
-		if (distSum == 0) {
-			nvs.values[i] = 0;
-		} else {
-			nvs.values[i] = ((n-1)/(N-1)) * ((n-1)/distSum);
-		}
+
+		// Whether u is isolated
+		nvs.values[u] = (n == 1) ? 0 : (n-1)/(nvs.numNodes-1) * (n-1)/distSum;
 		freeShortestPaths(sps);
 	}
 	return nvs;
 }
 
 NodeValues betweennessCentrality(Graph g) {
-	int n = GraphNumVertices(g);	// the number of nodes in the graph	
+	// Initialise NodeValues
 	NodeValues nvs;
-	nvs.numNodes = n;
-	nvs.values = malloc(n * sizeof(double));
-	// store every vertice's sps in a list
-	ShortestPaths *spss = malloc(n * sizeof(ShortestPaths));
-	for (Vertex i = 0; i < n; i++) {
-		spss[i] = dijkstra(g, i);
+	nvs.numNodes = GraphNumVertices(g);
+	nvs.values = malloc(nvs.numNodes * sizeof(double));
+
+	// sps for every vertex in the graph
+	ShortestPaths spss[nvs.numNodes];
+	for (Vertex v = 0; v < nvs.numNodes; v++) {
+		spss[v] = dijkstra(g, v);
 	}
-	// initialise pathNum[][]
-	initialisePathNum(n);
-	// count paths from any s to t in this graph (s != t)
-	for (Vertex s = 0; s < n; s++) {
-		preds = spss[s].pred;
-		for (Vertex t = 0; t < n; t++) {
-			if (s != t) {
-				dest = t;
-				src = s;
-				countPathNum(dest);
-			}
+	
+	// Initialise path num grids, 
+	// pathNum[s][t] is num of paths from i to j
+	int** pathNums = malloc(nvs.numNodes * sizeof(int*));
+	for (int i = 0; i < nvs.numNodes; i++) {
+		pathNums[i] = malloc(nvs.numNodes * sizeof(int));
+	}
+	for (Vertex s = 0; s < nvs.numNodes; s++) {
+		for (Vertex t = 0; t < nvs.numNodes; t++) {
+			pathNums[s][t] = (s == t) ? 1 : 0;
 		}
 	}
-	// calculate betweennessCentrality for every v
-	for (Vertex v = 0; v < n; v++) {
-		double quotientSum = 0;
-		for (Vertex s = 0; s < n; s++) {
+
+	// count path numbers for any s and t in this graph
+	for (Vertex s = 0; s < nvs.numNodes; s++) {
+		for (Vertex t = 0; t < nvs.numNodes; t++) {
+			pathNums[s][t] = countPathNum(spss[s], pathNums, s, t);
+		}
+	}
+
+	// Calculate Betweenness Centrality for any vertex v in graph
+	for (Vertex v = 0; v < nvs.numNodes; v++) {
+		double sum = 0;
+		for (Vertex s = 0; s < nvs.numNodes; s++) {
 			if (s != v) {
-				for (Vertex t = 0; t < n; t++) {
+				for (Vertex t = 0; t < nvs.numNodes; t++) {
 					if (t != v && t != s) {
-						double st =  pathNum[s][t];
-						double stv = 0;
-						// path pass v is shortest only if the sum is also shortest
-						if (spss[s].dist[v] + spss[v].dist[t] == spss[s].dist[t]) {
-							stv = pathNum[s][v] * pathNum[v][t];
-						}
-						if (st != 0) {
-							quotientSum += stv/st;
+						// If t is reachable from s and path from s to t passes v
+						if (spss[s].dist[t] != INFINITY 
+						&& spss[s].dist[v] + spss[v].dist[t] == spss[s].dist[t]) {
+							sum += (pathNums[s][v]*pathNums[v][t])/((double)pathNums[s][t]);
 						}
 					}
 				}
 			}
 		}
-		nvs.values[v] = quotientSum;
+		nvs.values[v] = sum;
 	}
-	freePathNum(n);
-	// free spss
-	for (Vertex i = 0; i < n; i++) {
-		freeShortestPaths(spss[i]);
+
+	// Free pathNums
+	for (int i = 0; i < nvs.numNodes; i++) {
+		free(pathNums[i]);
 	}
-	free(spss);
+	free(pathNums);
+
+	// Free spss
+	for (Vertex v = 0; v < nvs.numNodes; v++) {
+		freeShortestPaths(spss[v]);
+	}
+
 	return nvs;
 }
 
 NodeValues betweennessCentralityNormalised(Graph g) {
-	int n = GraphNumVertices(g);	// the number of nodes in the graph		
-	NodeValues nvs;
-	nvs.numNodes = n;
-	nvs.values = malloc(n * sizeof(double));
-	NodeValues unnormalised = betweennessCentrality(g);
-	for (Vertex i = 0; i < n; i++) {
-		nvs.values[i] = unnormalised.values[i] / ((n-1) * (n-2));
+	NodeValues nvs = betweennessCentrality(g);
+	// Normalise
+	for (Vertex v = 0; v < nvs.numNodes; v++) {
+		nvs.values[v] = nvs.values[v]/((nvs.numNodes-1)*(nvs.numNodes-2));
 	}
-	freeNodeValues(unnormalised);
 	return nvs;
 }
 
 void showNodeValues(NodeValues nvs) {
-	for (Vertex i = 0; i < nvs.numNodes; i++) {
-		printf("%d: %.6lf\n", i, nvs.values[i]);
+	for (Vertex v = 0; v < nvs.numNodes; v++) {
+		printf("%d: %.6lf\n", v, nvs.values[v]);
 	}
 }
 
@@ -127,29 +124,13 @@ void freeNodeValues(NodeValues nvs) {
 	free(nvs.values);
 }
 
-
-
-// Helper functions for counting numbers of shortest paths
-static void initialisePathNum(int n) {
-	pathNum = malloc(n * sizeof(int*));
-	for (int i = 0; i < n; i++) {
-		pathNum[i] = calloc(n, sizeof(int));
-	}
-}
-
-static void countPathNum(Vertex curr) {
-	if (curr == src) {
-		pathNum[src][dest]++;
-	} else {
-		for (PredList pred = preds[curr]; pred != NULL; pred = pred->next) {
-			countPathNum(pred->v);
+static int countPathNum(ShortestPaths sps, int** pathNums, Vertex src, Vertex dest) {
+	// Dynamically update path num for any src and dest.
+	// If haven't calculated, recursively calculate for any pred node.
+	if (pathNums[src][dest] == 0) {
+		for (PredNode* curr = sps.pred[dest]; curr != NULL; curr = curr->next) {
+			pathNums[src][dest] += countPathNum(sps, pathNums, src, curr->v);
 		}
 	}
-}
-
-static void freePathNum(int n) {
-	for (int i = 0; i < n; i++) {
-		free(pathNum[i]);
-	}
-	free(pathNum);
+	return pathNums[src][dest];
 }

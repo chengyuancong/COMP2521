@@ -172,6 +172,46 @@ static int max(int a, int b) {
 // the  given  time,  or  NULL if no such time exists. The returned time
 // should not be modified or freed.
 Time TreeFloor(Tree t, Time time) {
+    Node curr = t->root;
+    Time latest = NULL;
+    while (curr != NULL) {
+        if (TimeCmp(curr->time, time) == 0) {
+            return curr->time;
+        } else if (TimeCmp(curr->time, time) > 0) {
+            curr = curr->left;
+        } else {
+            latest = curr->time;
+            curr = curr->right;
+        }
+    }
+    return latest;
+}
+
+// Returns the earliest time in the tree that is later than or equal  to
+// the  given  time,  or  NULL if no such time exists. The returned time
+// should not be modified or freed.
+Time TreeCeiling(Tree t, Time time) {
+    Node curr = t->root;
+    Time earliest = NULL;
+    while (curr != NULL) {
+        int cmp = TimeCmp(curr->time, time);
+        if (cmp == 0) {
+            return curr->time;
+        } else if (cmp < 0) {
+            curr = curr->right;
+        } else {
+            earliest = curr->time;
+            curr = curr->left;
+        }
+    }
+    return earliest;
+}
+
+/*
+// Returns the latest time in the tree that is earlier than or equal  to
+// the  given  time,  or  NULL if no such time exists. The returned time
+// should not be modified or freed.
+Time TreeFloor(Tree t, Time time) {
     return doTreeFloor(t->root, time, NULL);
 }
 
@@ -207,6 +247,7 @@ static Time doTreeCeiling(Node n, Time time, Time closest) {
         return doTreeCeiling(n->right, time, closest);
     }
 }
+*/
 
 ////////////////////////////////////////////////////////////////////////
 // Printing
